@@ -20,15 +20,15 @@ public class Server {
     // Create a new LipeRMI server object
     net.sf.lipermi.net.Server server = new net.sf.lipermi.net.Server();
     // Words array
-    String[] words = new String[] {"PREGUNTA", "SERVIDOR", "CLIENTE", "PROGRAMACION", "ORDENADOR"};
+    String[] words = new String[]{"PREGUNTA", "SERVIDOR", "CLIENTE", "PROGRAMACION", "ORDENADOR"};
 
     // Server functions (are common with the client thanks to the interface)
     public Server() throws LipeRMIException, IOException {
         Remote ImplementacionDeInterfaz = UnicastRemoteObject.exportObject(new Interfaz() {
+            final ArrayList<Character> status = new ArrayList<>();
             // Control variables
             int fallos = 0;
             String word = "";
-            final ArrayList<Character> status = new ArrayList<>();
 
             // Implement interface functions (common with the client)
             @Override
@@ -36,7 +36,7 @@ public class Server {
                 boolean found = false; // Letter in word to guess flag
                 // Check if the letter is in the word
                 for (int i = 0; i < word.length(); i++) {
-                    if( String.valueOf(letter).toUpperCase(Locale.ROOT).equals(String.valueOf(word.charAt(i)))) {
+                    if (String.valueOf(letter).toUpperCase(Locale.ROOT).equals(String.valueOf(word.charAt(i)))) {
                         found = true;
                         status.set(i, letter);
                     }
@@ -46,7 +46,7 @@ public class Server {
                     fallos++;
                 }
                 // Win condition
-                if (status.stream().map(Objects::toString).collect(Collectors.joining("")).equalsIgnoreCase(word)){
+                if (status.stream().map(Objects::toString).collect(Collectors.joining("")).equalsIgnoreCase(word)) {
                     fallos = -1;
                 }
                 // Debugging status and word...
@@ -59,7 +59,7 @@ public class Server {
             @Override
             public String init() throws RemoteException {
                 // Randomly choose a new word.
-                word = words[(int)(Math.random() * (4)+1)];
+                word = words[(int) (Math.random() * (4) + 1)];
                 for (int i = 0; i < word.length(); i++) {
                     status.add('_');
                 }
@@ -101,7 +101,7 @@ public class Server {
         });
     }
 
-    public static void main (String[] args) throws LipeRMIException, IOException {
+    public static void main(String[] args) throws LipeRMIException, IOException {
         // Create a new server, and announce that on console.
         new Server();
         System.out.println("Server started");
